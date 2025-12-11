@@ -14,7 +14,11 @@ builder.Services.AddCors(options =>
         {
             // React / frontend origin
             policy
-                .WithOrigins("https://blue-glacier-01b5d7e00.3.azurestaticapps.net") // or https://localhost:5000 if your frontend uses https
+              .WithOrigins(
+                    "https://blue-glacier-01b5d7e00.3.azurestaticapps.net", // Azure Static Web App
+                    "http://localhost:5000",                               // local dev (optional)
+                    "https://localhost:5000"                               // local HTTPS (optional)
+                )
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
