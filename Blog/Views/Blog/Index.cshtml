@@ -1,0 +1,110 @@
+﻿@model Blog.Models.BlogListViewModel
+@{
+    Layout = "_Layout";
+}
+
+@* Breadcrumbs — Index page only *@
+<div class="container container-wide">
+    <nav aria-label="breadcrumb" class="py-3">
+        <ol class="breadcrumb mb-0 breadcrumb-custom">           
+            <li class="breadcrumb-item active" aria-current="page">Blogs</li>
+        </ol>
+    </nav>
+</div>
+
+<section class="container container-wide my-4">
+    <div class="row g-4">
+        <!-- Left: Featured hero -->
+        <div class="col-lg-8">
+            <article class="card border-0 shadow-soft">
+                <div class="ratio ratio-16x9">
+                    <img src="@Model.Featured.FeatureImageUrl" alt="@Model.Featured.Title" class="img-fluid rounded-top" />
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-2">
+                        <span class="tag">@Model.Featured.Category</span>
+                    </div>
+                    <h1 class="display-5 fw-800 mt-1 mb-2">@Model.Featured.Title</h1>
+                    <p class="lead text-muted">@Model.Featured.Excerpt</p>
+                    <div class="d-flex align-items-center gap-2 text-muted small">
+                        <span>Meera</span>
+                        @* <span>@Model.Featured.PublishedDate.ToString("MMM d, yyyy")</span>
+                        <span>· @Model.Featured.rea min</span> *@
+                    </div>
+                    <a class="stretched-link" asp-controller="Blog" asp-action="Details" asp-route-slug="@Model.Featured.Slug"></a>
+                </div>
+            </article>
+        </div>
+
+        <!-- Right: Trending sidebar -->
+        <aside class="col-lg-4">
+            <div class="card border-0 shadow-soft">
+                <div class="card-body">
+                    <h2 class="h4 fw-bold mb-3">Archive</h2>
+                    <div class="vstack gap-3">
+                        @foreach (var p in Model.Trending)
+                        {
+                            <article class="d-flex gap-3 align-items-start">
+                                <div class="flex-shrink-0" style="width:110px">
+                                    <div class="ratio ratio-16x9 rounded overflow-hidden">
+                                        <img src="@p.FeatureImageUrl" alt="@p.Title" class="img-fluid" />
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h3 class="h6 mb-1 fw-semibold">
+                                        <a class="text-decoration-none text-dark" asp-controller="Blog" asp-action="Details" asp-route-slug="@p.Slug">@p.Title</a>
+                                    </h3>
+                                    <div class="small text-muted d-flex flex-wrap gap-1">
+                                        <span>@p.PublishedDate.ToString("MMM d, yyyy")</span>
+                                        <span>· @p.ReadMinutes min</span>
+                                        @if (!string.IsNullOrWhiteSpace(p.Category))
+                                        {
+                                            <span class="badge rounded-pill bg-light text-dark border">@p.Category</span>
+                                        }
+                                    </div>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</section>
+
+<style>
+    .shadow-soft {
+        box-shadow: 0 12px 30px rgba(0,0,0,.08)
+    }
+
+    .fw-800 {
+        font-weight: 800
+    }
+
+    .breadcrumb-custom {
+        font-size: 1rem; /* slightly bigger than default */
+        font-weight: 500;
+        --bs-breadcrumb-divider: '›';
+    }
+
+        .breadcrumb-custom a {
+            color: #00c2ff; /* bright cyan to match your logo/accent */
+            text-decoration: none;
+        }
+
+            .breadcrumb-custom a:hover {
+                text-decoration: underline;
+            }
+
+        .breadcrumb-custom .active {
+            color: #e0e0e0; /* light gray for readability */
+        }
+
+    /* Optional subtle fade background to separate from header */
+    nav[aria-label="breadcrumb"] {
+        background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border-radius: 6px;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+</style>

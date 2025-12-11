@@ -1,0 +1,172 @@
+﻿@model Blog.Models.BlogPostViewModel
+@{
+    Layout = "_Layout";
+}
+
+<div class="container container-wide">
+    <nav aria-label="breadcrumb" class="py-3">
+        <a asp-controller="Blog" asp-action="Index"
+           class="text-decoration-none"
+           style="color:#00b8ff;font-weight:700;">Blog</a>
+        <span aria-hidden="true" style="color:#a3b5d0;margin:0 8px;">/</span>
+        <span style="color:#c6d1e0;font-weight:600;">@Model.Title</span>
+    </nav>
+</div>
+<section class="container px-3 px-md-4" style="margin-top:20px;color:#e6edf3;">
+
+    <!-- Glass card -->
+    <div style="
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 20px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 2.5rem 2.5rem 2rem;
+        max-width: 850px;
+        margin: 2.5rem auto;
+        box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+    ">
+
+        <!-- Breadcrumb -->
+       @*  <nav class="small" aria-label="breadcrumb"
+             style="display:block;margin:0 auto 1.5rem;max-width:760px;font-weight:600;">
+            <a href="https://gittibilsms.com/index.html"
+               class="text-decoration-none"
+               style="color:#00b8ff;font-weight:700;">Home</a>
+            <span aria-hidden="true" style="color:#a3b5d0;margin:0 8px;">/</span>
+            <a asp-controller="Blog" asp-action="Index"
+               class="text-decoration-none"
+               style="color:#00b8ff;font-weight:700;">Blog</a>
+            <span aria-hidden="true" style="color:#a3b5d0;margin:0 8px;">/</span>
+            <span style="color:#c6d1e0;font-weight:600;">@Model.Title</span>
+        </nav> *@
+
+        <!-- Title + meta -->
+        <header style="max-width:760px;margin:0 auto 1.25rem;">
+            <h1 style="
+                font-size:clamp(2.4rem,3.6vw,3rem);
+                font-weight:800;
+                line-height:1.15;
+                color:#ffffff;
+                margin:.35rem 0 .85rem;
+                overflow-wrap:anywhere;
+            ">
+                @Model.Title
+            </h1>
+            <div style="color:#9fb3c8;font-size:0.95rem;margin-bottom:1.75rem;">
+                @Model.PublishedDate?.ToString("MMMM d, yyyy") · @Model.ReadMinutes min read
+            </div>
+        </header>
+
+        <!-- Feature image -->
+        @if (!string.IsNullOrEmpty(Model.FeatureImageUrl))
+        {
+            <figure style="max-width:760px;margin:0 auto 1.75rem;">
+                <img src="@Model.FeatureImageUrl"
+                     alt="@Model.Title"
+                     style="width:100%;display:block;border-radius:14px;
+                                box-shadow:0 8px 24px rgba(0,0,0,0.45);" />
+            </figure>
+        }
+
+        <!-- Blog body -->
+        <article id="blog-body"
+                 style="
+            max-width:760px;
+            margin:0 auto;
+            color:#e9f2ff;
+            line-height:1.8;
+            font-size:1.05rem;
+         ">
+            @Html.Raw(Model.Content)
+        </article>
+
+
+        <!-- Divider -->
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,0.1);
+                   margin:2rem auto 1.5rem;max-width:760px;" />
+
+        <!-- Meta footer -->
+        <div style="max-width:760px;margin:0 auto;color:#b5c3d6;font-size:0.95rem;">
+            <p style="margin:0 0 .4rem;">
+                <strong style="color:#ffffff;">Category:</strong> @Model.Category
+            </p>
+            <p style="margin:0 0 .4rem;">
+                <strong style="color:#ffffff;">Author:</strong> @Model.CreatedBy
+            </p>
+            <p style="margin:0;">
+                <strong style="color:#ffffff;">Published on:</strong>
+                @Model.PublishedDate?.ToString("MMMM dd, yyyy")
+            </p>
+        </div>
+    </div>
+</section>
+<style>
+    .shadow-soft {
+        box-shadow: 0 12px 30px rgba(0,0,0,.08)
+    }
+
+    .fw-800 {
+        font-weight: 800
+    }
+
+    .breadcrumb-custom {
+        font-size: 1rem;
+        font-weight: 500;
+        --bs-breadcrumb-divider: '›';
+    }
+
+        .breadcrumb-custom a {
+            color: #00c2ff;
+            text-decoration: none;
+        }
+
+            .breadcrumb-custom a:hover {
+                text-decoration: underline;
+            }
+
+        .breadcrumb-custom .active {
+            color: #e0e0e0;
+        }
+
+    nav[aria-label="breadcrumb"] {
+        background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border-radius: 6px;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Make any images inside the content fit the section */
+    .blog-article img {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block;
+        margin: 1.5rem auto;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        object-fit: contain;
+    }
+
+    .blog-article figure {
+        margin: 1.5rem auto;
+        max-width: 100%;
+    }
+    /* All images that come from the blog content */
+    #blog-body img {
+        max-width: 100% !important; /* never wider than the article */
+        width: auto !important; /* ignore any fixed width from editor */
+        height: auto !important; /* keep aspect ratio */
+        display: block !important;
+        margin: 1.5rem auto !important; /* center and kill negative margins */
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        object-fit: contain;
+    }
+
+    /* If content uses <figure> */
+    #blog-body figure {
+        max-width: 100%;
+        margin: 1.5rem auto !important;
+    }
+
+</style>

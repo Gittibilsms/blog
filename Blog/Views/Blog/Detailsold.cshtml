@@ -1,0 +1,30 @@
+@* @model Blog.Models.BlogPostViewModel
+@{
+    Layout = "_Layout";
+}
+<section class="container">
+    <nav class="small mt-4">
+        <a asp-controller="Home" asp-action="Index" class="text-decoration-none">Home</a>
+        <span class="text-muted mx-1">/</span>
+        <a asp-controller="Blog" asp-action="Index" class="text-decoration-none">Blog</a>
+        <span class="text-muted mx-1">/</span>
+        <span class="text-muted">@Model.Title</span>
+    </nav>
+
+    <header class="container mx-auto" style="max-width: 760px;">
+        <h1 class="display-4 fw-800">@Model.Title</h1>
+        <div class="text-muted small">@Model.PublishedAt.ToString("MMMM d, yyyy") · @Model.ReadMinutes min read</div>
+    </header>
+
+    @if (!string.IsNullOrEmpty(Model.FeatureImageUrl))
+    {
+        <div class="mx-auto my-3" style="max-width: 760px; border-radius:16px; overflow:hidden;">
+            <img src="@Model.FeatureImageUrl" alt="@Model.Title" class="img-fluid" />
+        </div>
+    }
+
+    <div class="mx-auto" style="max-width: 760px;">
+        @Html.Raw(Model.HtmlBody)
+    </div>
+</section>
+ *@

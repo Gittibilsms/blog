@@ -1,0 +1,28 @@
+﻿# Visual Studio
+.vs/
+*.user
+*.rsuser
+*.suo
+
+# Build results
+bin/
+obj/
+Debug/
+Release/
+
+# NuGet
+packages/
+*.nupkg
+project.lock.json
+
+# Logs
+*.log
+
+# Publish output
+publish/
+out/
+
+# Others
+*.db
+*.DS_Store
+Thumbs.db

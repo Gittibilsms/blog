@@ -1,0 +1,132 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background: radial-gradient(circle at 30% 20%, #1b2a6b, #0b1023 70%);
+    color: #fff;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+/* Add this to your custom CSS */
+.main-container {
+    max-width: 1200px; /* Adjust to your preferred width */
+    margin: 0 auto; /* Center align the content */
+    padding: 20px;
+}
+
+.blog-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* One reading column for all blocks */
+.content-wrap {
+    width: min(100%, 760px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Breadcrumbs */
+.blog-details nav.small a {
+    color: #86c8ff;
+    text-decoration: none;
+}
+
+    .blog-details nav.small a:hover {
+        text-decoration: underline;
+    }
+
+.blog-details .sep {
+    color: #7a8aa8;
+}
+
+.blog-details .crumb-current {
+    color: #9fb3c8;
+}
+
+/* Title + meta */
+.post-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #f0f6fc;
+    margin: .5rem 0 1rem;
+    word-break: break-word; /* prevent overflow on long words */
+}
+
+.meta {
+    color: #9fb3c8;
+    font-size: .95rem;
+    margin-bottom: 1.25rem;
+}
+
+/* Image */
+.hero {
+    margin: 1rem 0 1.5rem;
+}
+
+    .hero img {
+        width: 100%;
+        display: block;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.45);
+        max-width: 100%;
+    }
+
+/* Body text on dark gradient */
+.post-body {
+    color: #dbe7ff;
+    line-height: 1.75;
+}
+
+    .post-body p {
+        margin: 0 0 1.1rem;
+    }
+
+    .post-body h2, .post-body h3, .post-body h4 {
+        color: #f0f6fc;
+        margin: 1.4rem 0 .6rem;
+    }
+
+    .post-body a {
+        color: #2dd4bf;
+    }
+
+        .post-body a:hover {
+            color: #9cf1e6;
+        }
+
+    .post-body img {
+        max-width: 100%;
+        height: auto;
+    }
+
+/* Meta footer */
+.post-meta {
+    margin-top: 1.25rem;
+    color: #a6b3c7;
+}
+
+    .post-meta strong {
+        color: #d6e2f0;
+    }
+
+
+

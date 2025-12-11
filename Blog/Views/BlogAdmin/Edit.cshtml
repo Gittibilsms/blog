@@ -1,0 +1,637 @@
+﻿@model BlogPost
+@{
+    ViewData["Title"] = "Edit Blog";
+    Layout = "_Layout";
+}
+
+<style>
+    .edit-blog {
+        max-width: 1080px;
+        margin: 32px auto;
+        color: #111;
+    }
+
+        .edit-blog .card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.35);
+            padding: 28px;
+        }
+
+        .edit-blog h2 {
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #0d1b3a;
+        }
+
+        .edit-blog .form-label {
+            color: #0b153a;
+            font-weight: 600;
+        }
+
+        .edit-blog .form-control {
+            background: #fff;
+            border: 1px solid #ccc;
+            color: #111;
+            border-radius: 8px;
+            transition: all .2s ease;
+        }
+
+            .edit-blog .form-control::placeholder {
+                color: #888;
+            }
+
+            .edit-blog .form-control:focus {
+                border-color: #00b8ff;
+                box-shadow: 0 0 0 3px rgba(0,184,255,.25);
+            }
+
+        .edit-blog .text-danger {
+            color: #d9534f !important;
+        }
+
+        .edit-blog .form-check-input:checked {
+            background-color: #00c2b2;
+            border-color: #00c2b2;
+        }
+
+        .edit-blog .form-check-label {
+            color: #0b153a;
+        }
+
+        .edit-blog .btn-success {
+            background: #00b8ff;
+            border: none;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: .55rem 1.25rem;
+        }
+
+            .edit-blog .btn-success:hover {
+                background: #19c6ff;
+            }
+
+        .edit-blog .btn-secondary {
+            background: #ddd;
+            border: none;
+            color: #333;
+            border-radius: 8px;
+            padding: .55rem 1.15rem;
+        }
+
+            .edit-blog .btn-secondary:hover {
+                background: #ccc;
+            }
+
+        .edit-blog .editor-shell {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+    @@media (max-width:768px) {
+        .edit-blog {
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+            .edit-blog .card {
+                padding: 18px;
+            }
+    }
+
+    .cke_notification_message,
+    .cke_notification_close,
+    .cke_notification,
+    .cke_notifications_area {
+        display: none !important;
+    }
+</style>
+
+<div class="edit-blog">
+    <div style="
+      width:100%;
+      padding:28px 0 18px;
+      background: linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,0));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      margin-bottom: 10px;
+    ">
+        <div class="container" style="max-width:1080px; margin:0 auto; padding:0 12px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+            <h1 style="
+              margin:0;
+              font-size: clamp(1.6rem, 2.6vw, 2rem);
+              font-weight: 800;
+              letter-spacing: .2px;
+              color:#ffffff;
+              text-shadow: 0 2px 12px rgba(0,0,0,.35);
+            ">
+                Edit blog
+            </h1>
+
+            <a href="@Url.Action("Index", "BlogAdmin")"
+               class="btn"
+               style="background:#0ea5a5; color:#fff; border:none; font-weight:600; padding:.5rem .9rem; border-radius:8px; text-decoration:none;">
+                ← Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <form asp-action="Edit" method="post" class="row g-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="BlogId" />
+
+            <div class="col-md-6">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" placeholder="Enter blog title" />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Slug" class="form-label"></label>
+                <input asp-for="Slug" class="form-control" placeholder="Enter slug" />
+                <span asp-validation-for="Slug" class="text-danger small"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Excerpt" class="form-label"></label>
+                <textarea asp-for="Excerpt" rows="3" class="form-control" placeholder="Enter blog excerpt"></textarea>
+                <span asp-validation-for="Excerpt" class="text-danger small"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Content" class="form-label"></label>
+
+                <!-- HTML import + clear controls (like EmailTemplates view) -->
+                <div class="d-flex gap-2 mb-2">
+                    <input type="file" id="htmlFileInput" accept=".html,.htm" style="display:none;" />
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="btnImportHtml" title="Import HTML Template">
+                        <i class="bi bi-file-earmark-code"></i> Import HTML
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btnClearEditor" title="Clear Editor">
+                        <i class="bi bi-trash"></i> Clear
+                    </button>
+                    <small class="text-muted ms-auto align-self-center" id="importStatus"></small>
+                </div>
+
+                <div class="editor-shell">
+                    <textarea asp-for="Content" id="Content" rows="10" class="form-control border-0 rounded-0" placeholder="Enter blog content"></textarea>
+                </div>
+                <span asp-validation-for="Content" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="FeatureImageUrl" class="form-label"></label>
+                <input asp-for="FeatureImageUrl" class="form-control" placeholder="Enter feature image URL" />
+                <span asp-validation-for="FeatureImageUrl" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Category" class="form-label"></label>
+                <input asp-for="Category" class="form-control" placeholder="Enter category" />
+                <span asp-validation-for="Category" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Tags" class="form-label"></label>
+                <input asp-for="Tags" class="form-control" placeholder="Enter tags separated by commas" />
+                <span asp-validation-for="Tags" class="text-danger small"></span>
+            </div>
+
+            <div class="col-12 d-flex gap-4 mt-1">
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" id="IsActive" />
+                    <label class="form-check-label" for="IsActive">Active</label>
+                </div>
+                <div class="form-check">
+                    <input asp-for="IsPublished" class="form-check-input" id="IsPublished" />
+                    <label class="form-check-label" for="IsPublished">Published</label>
+                </div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a href="@Url.Action("Index", "BlogAdmin")" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- CKEditor 5 super-build -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>
+
+    <!-- CKEditor upload adapter (optional, adjust UploadImage/BlogAdmin as needed) -->
+    <script>
+        class CkSimpleAdapter {
+            constructor(loader, uploadUrl) {
+                this.loader = loader;
+                this.uploadUrl = uploadUrl;
+            }
+            upload() {
+                return this.loader.file.then(file => new Promise((resolve, reject) => {
+                    const data = new FormData();
+                    data.append('upload', file);
+                    fetch(this.uploadUrl, {
+                        method: 'POST',
+                        body: data,
+                        credentials: 'same-origin'
+                    })
+                        .then(r => r.ok ? r.json() : Promise.reject(r))
+                        .then(json => resolve({ default: json.url }))
+                        .catch(reject);
+                }));
+            }
+            abort() {}
+        }
+                function CkUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = loader =>
+                new CkSimpleAdapter(loader, '/BlogAdmin/UploadImage');
+        }
+
+    </script>
+
+    <!-- Source preview (HTML + live preview modal) -->
+    <script>
+        function setupSourcePreview(editor) {
+            var previewContainer = document.createElement('div');
+            previewContainer.id = 'source-preview-container';
+            previewContainer.style.cssText =
+                'display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
+                'width:90%;max-width:1400px;height:80vh;background:white;' +
+                'box-shadow:0 4px 20px rgba(0,0,0,0.3);border-radius:8px;z-index:9999;overflow:hidden;';
+
+            var header = document.createElement('div');
+            header.style.cssText =
+                'background:#2c3e50;color:white;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;';
+            header.innerHTML =
+                '<h3 style="margin:0;font-size:16px;">HTML Source Editor with Live Preview</h3>' +
+                '<button id="closeSourcePreview" style="background:transparent;border:none;color:white;font-size:24px;cursor:pointer;padding:0;width:30px;height:30px;">&times;</button>';
+
+            var contentWrapper = document.createElement('div');
+            contentWrapper.style.cssText = 'display:flex;height:calc(100% - 60px);';
+
+            var editorPane = document.createElement('div');
+            editorPane.style.cssText = 'flex:1;border-right:2px solid #ddd;overflow:auto;';
+
+            var editorHeader = document.createElement('div');
+            editorHeader.style.cssText = 'background:#ecf0f1;padding:10px 15px;font-weight:bold;border-bottom:1px solid #bdc3c7;';
+            editorHeader.textContent = 'HTML Source';
+
+            var textarea = document.createElement('textarea');
+            textarea.id = 'source-code-editor';
+            textarea.style.cssText =
+                'width:100%;height:calc(100% - 45px);padding:15px;border:none;' +
+                'font-family:Consolas,Monaco,monospace;font-size:13px;resize:none;';
+
+            editorPane.appendChild(editorHeader);
+            editorPane.appendChild(textarea);
+
+            var previewPane = document.createElement('div');
+            previewPane.style.cssText = 'flex:1;overflow:auto;background:#f5f5f5;';
+
+            var previewHeader = document.createElement('div');
+            previewHeader.style.cssText = 'background:#ecf0f1;padding:10px 15px;font-weight:bold;border-bottom:1px solid #bdc3c7;';
+            previewHeader.textContent = 'Live Preview';
+
+            var previewContent = document.createElement('div');
+            previewContent.id = 'preview-content';
+            previewContent.style.cssText =
+                'padding:20px;background:white;margin:20px;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,0.1);';
+
+            previewPane.appendChild(previewHeader);
+            previewPane.appendChild(previewContent);
+
+            contentWrapper.appendChild(editorPane);
+            contentWrapper.appendChild(previewPane);
+
+            previewContainer.appendChild(header);
+            previewContainer.appendChild(contentWrapper);
+            document.body.appendChild(previewContainer);
+
+            var backdrop = document.createElement('div');
+            backdrop.id = 'source-preview-backdrop';
+            backdrop.style.cssText =
+                'display:none;position:fixed;top:0;left:0;right:0;bottom:0;' +
+                'background:rgba(0,0,0,0.5);z-index:9998;';
+            document.body.appendChild(backdrop);
+
+            function updatePreview() {
+                previewContent.innerHTML = textarea.value;
+            }
+
+            var sourceButton = null;
+            setTimeout(function () {
+                var buttons = editor.ui.view.toolbar.element.querySelectorAll('button');
+                for (var i = 0; i < buttons.length; i++) {
+                    var tip = buttons[i].getAttribute('data-cke-tooltip-text');
+                    if (tip && tip.includes('Source')) {
+                        sourceButton = buttons[i];
+                        break;
+                    }
+                }
+
+                if (sourceButton) {
+                    sourceButton.addEventListener('click', function () {
+                        setTimeout(function () {
+                            var sourceEditing = editor.plugins.get('SourceEditing');
+                            if (sourceEditing.isSourceEditingMode) {
+                                textarea.value = editor.getData();
+                                updatePreview();
+                                previewContainer.style.display = 'block';
+                                backdrop.style.display = 'block';
+                            }
+                        }, 100);
+                    });
+                }
+            }, 1000);
+
+            textarea.addEventListener('input', updatePreview);
+
+            document.getElementById('closeSourcePreview').addEventListener('click', function () {
+                editor.setData(textarea.value);
+                var sourceEditing = editor.plugins.get('SourceEditing');
+                if (sourceEditing.isSourceEditingMode) {
+                    sourceEditing.isSourceEditingMode = false;
+                }
+                previewContainer.style.display = 'none';
+                backdrop.style.display = 'none';
+            });
+
+            backdrop.addEventListener('click', function () {
+                document.getElementById('closeSourcePreview').click();
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && previewContainer.style.display === 'block') {
+                    document.getElementById('closeSourcePreview').click();
+                }
+            });
+        }
+    </script>
+
+    <!-- Emoji dropdown button -->
+    <script>
+        function addEmojiButton(editor) {
+            setTimeout(function () {
+                var toolbarEl = editor.ui.view.toolbar.element;
+                if (!toolbarEl || toolbarEl.querySelector('.emoji-dropdown')) return;
+
+                var wrap = document.createElement('div');
+                wrap.className = 'ck ck-dropdown emoji-dropdown';
+                wrap.style.cssText = 'position:relative;display:inline-block;margin:0 2px;';
+
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'ck ck-button ck-off';
+                btn.title = 'Insert Emoji';
+                btn.innerHTML = '<span style="font-size:20px;line-height:1;">&#128512;</span>';
+
+                var panel = document.createElement('div');
+                panel.className = 'emoji-panel';
+                panel.style.cssText =
+                    'display:none;position:absolute;top:100%;left:0;' +
+                    'background:#fff;border:1px solid #ccc;border-radius:6px;' +
+                    'box-shadow:0 2px 10px rgba(0,0,0,0.15);' +
+                    'padding:12px;width:340px;max-height:320px;overflow-y:auto;' +
+                    'z-index:9999;margin-top:5px;';
+
+                var emojiGroups = {
+                    "Smileys": [
+                        '\uD83D\uDE00','\uD83D\uDE03','\uD83D\uDE04','\uD83D\uDE01','\uD83D\uDE06',
+                        '\uD83E\uDD23','\uD83D\uDE02','\uD83D\uDE0A','\uD83D\uDE07','\uD83D\uDE09',
+                        '\uD83D\uDE0D','\uD83E\uDD29','\uD83D\uDE18','\uD83D\uDE17','\uD83D\uDE1A',
+                        '\uD83D\uDE19','\uD83E\uDD17','\uD83E\uDD14','\uD83D\uDE10','\uD83D\uDE11',
+                        '\uD83D\uDE36','\uD83D\uDE44','\uD83D\uDE0F','\uD83D\uDE23','\uD83D\uDE25'
+                    ],
+                    "Gestures": [
+                        '\uD83D\uDC4D','\uD83D\uDC4E','\uD83D\uDC4C','\u270C\uFE0F','\uD83E\uDD1E',
+                        '\uD83E\uDD18','\uD83D\uDC48','\uD83D\uDC49','\uD83D\uDC46','\uD83D\uDC47',
+                        '\u270B','\uD83D\uDC4B','\uD83E\uDD1D','\uD83D\uDE4F','\uD83D\uDCAA'
+                    ],
+                    "Hearts": [
+                        '\u2764\uFE0F','\uD83E\uDDE1','\uD83D\uDC9B','\uD83D\uDC9A','\uD83D\uDC99',
+                        '\uD83D\uDC9C','\uD83D\uDDA4','\uD83D\uDC94','\uD83D\uDC95','\uD83D\uDC9E',
+                        '\uD83D\uDC93','\uD83D\uDC97','\uD83D\uDC96','\uD83D\uDC98','\uD83D\uDC9D'
+                    ],
+                    "Symbols": [
+                        '\uD83D\uDD25','\u2728','\u2B50','\uD83C\uDF1F','\uD83D\uDCA5',
+                        '\uD83D\uDCAF','\u2705','\u274C','\u26A0\uFE0F','\uD83D\uDEAB',
+                        '\u2757','\u2753','\uD83D\uDCAC','\uD83D\uDCAD'
+                    ],
+                    "Objects": [
+                        '\uD83C\uDF89','\uD83C\uDF8A','\uD83C\uDF88','\uD83C\uDF81','\uD83C\uDFC6',
+                        '\uD83C\uDFC5','\uD83D\uDC51','\uD83D\uDCA1','\uD83D\uDE80','\uD83D\uDCB0',
+                        '\uD83D\uDCB2','\uD83D\uDCC8','\uD83D\uDCC5','\uD83D\uDCCB','\uD83D\uDCBC',
+                        '\uD83D\uDCE7','\uD83D\uDCF1','\uD83D\uDD14','\uD83D\uDD12','\uD83D\uDD11'
+                    ]
+                };
+
+                var html = '';
+                for (var cat in emojiGroups) {
+                    var arr = emojiGroups[cat];
+                    html += '<div style="margin-bottom:10px;">';
+                    html += '<div style="font-size:11px;font-weight:600;color:#666;margin-bottom:6px;text-transform:uppercase;">' + cat + '</div>';
+                    html += '<div style="display:flex;flex-wrap:wrap;gap:4px;">';
+                    for (var i = 0; i < arr.length; i++) {
+                        var emoji = arr[i];
+                        html += '<button type="button" class="emoji-btn" data-emoji="' + i + '" data-cat="' + cat + '" ' +
+                            'style="border:none;background:none;font-size:24px;cursor:pointer;padding:4px;border-radius:4px;transition:background 0.2s;">' +
+                            emoji + '</button>';
+                    }
+                    html += '</div></div>';
+                }
+                panel.innerHTML = html;
+
+                var style = document.createElement('style');
+                style.textContent = '.emoji-btn:hover { background: #f0f0f0 !important; }';
+                document.head.appendChild(style);
+
+                var open = false;
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    open = !open;
+                    panel.style.display = open ? 'block' : 'none';
+                    btn.classList.toggle('ck-on', open);
+                });
+
+                panel.addEventListener('click', function (e) {
+                    var b = e.target.closest('.emoji-btn');
+                    if (!b) return;
+                    var cat = b.getAttribute('data-cat');
+                    var idx = parseInt(b.getAttribute('data-emoji'));
+                    var emoji = emojiGroups[cat][idx];
+                    editor.model.change(function (writer) {
+                        var pos = editor.model.document.selection.getFirstPosition();
+                        writer.insertText(emoji, pos);
+                    });
+                    panel.style.display = 'none';
+                    open = false;
+                    btn.classList.remove('ck-on');
+                    editor.editing.view.focus();
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!wrap.contains(e.target) && open) {
+                        panel.style.display = 'none';
+                        open = false;
+                        btn.classList.remove('ck-on');
+                    }
+                });
+
+                wrap.appendChild(btn);
+                wrap.appendChild(panel);
+                toolbarEl.appendChild(wrap);
+            }, 500);
+        }
+
+        // Ctrl+E opens the emoji dropdown
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                var emojiBtn = document.querySelector('.emoji-dropdown button');
+                if (emojiBtn) emojiBtn.click();
+            }
+        });
+    </script>
+
+    <!-- HTML import + drag & drop -->
+    <script>
+        function setupHtmlImport(editor) {
+            var fileInput = document.getElementById('htmlFileInput');
+            var btnImport = document.getElementById('btnImportHtml');
+            var btnClear = document.getElementById('btnClearEditor');
+            var statusEl = document.getElementById('importStatus');
+
+            function showStatus(msg, type) {
+                if (!statusEl) return;
+                type = type || 'success';
+                statusEl.textContent = msg;
+                statusEl.className = 'text-' + type + ' ms-auto align-self-center';
+                setTimeout(function () { statusEl.textContent = ''; }, 3000);
+            }
+
+            function sanitize(html) {
+                var clean = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                clean = clean.replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, '');
+                clean = clean.replace(/\s*on\w+\s*=\s*[^\s>]*/gi, '');
+                clean = clean.replace(/javascript:/gi, '');
+                return clean;
+            }
+
+            if (btnImport && fileInput) {
+                btnImport.addEventListener('click', function () { fileInput.click(); });
+            }
+
+            if (btnClear) {
+                btnClear.addEventListener('click', function () {
+                    if (confirm('Clear editor content?')) {
+                        editor.setData('');
+                        showStatus('Editor cleared', 'success');
+                    }
+                });
+            }
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function () {
+                    var file = fileInput.files[0];
+                    if (!file) return;
+
+                    if (!file.name.match(/\.(html|htm)$/i)) {
+                        showStatus('Please select an HTML file', 'danger');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var html = sanitize(e.target.result);
+                        var current = editor.getData().trim();
+
+                        if (current && !confirm('Replace current content with imported HTML?')) {
+                            editor.setData(current + '\n' + html);
+                            showStatus('HTML appended', 'success');
+                        } else {
+                            editor.setData(html);
+                            showStatus('HTML imported successfully', 'success');
+                        }
+                        fileInput.value = '';
+                    };
+                    reader.readAsText(file);
+                });
+            }
+
+            var editorEl = editor.ui.view.editable.element;
+            if (editorEl) {
+                ['dragenter', 'dragover'].forEach(function (evt) {
+                    editorEl.addEventListener(evt, function (e) {
+                        e.preventDefault();
+                        editorEl.style.background = '#f0f8ff';
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(function (evt) {
+                    editorEl.addEventListener(evt, function (e) {
+                        e.preventDefault();
+                        editorEl.style.background = '';
+                    });
+                });
+
+                editorEl.addEventListener('drop', function (e) {
+                    var file = e.dataTransfer.files[0];
+                    if (file && file.name.match(/\.(html|htm)$/i)) {
+                        var dt = new DataTransfer();
+                        dt.items.add(file);
+                        if (fileInput) {
+                            fileInput.files = dt.files;
+                            fileInput.dispatchEvent(new Event('change'));
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+
+    <!-- CKEditor init (Content) -->
+    <script>
+        CKEDITOR.ClassicEditor.create(document.querySelector('#Content'), {
+            extraPlugins: [CkUploadAdapterPlugin],
+            removePlugins: [
+                'Base64UploadAdapter','AI','AIAssistant','MultiLevelList','TableOfContents','FormatPainter',
+                'Template','SlashCommand','PasteFromOfficeEnhanced','CaseChange','RealTimeCollaborativeComments',
+                'RealTimeCollaborativeTrackChanges','RealTimeCollaborativeRevisionHistory','PresenceList','Comments',
+                'TrackChanges','TrackChangesData','RevisionHistory','Pagination','DocumentOutline','WProofreader','MathType'
+            ],
+            image: { resizeUnit: 'px' },
+            toolbar: {
+                shouldNotGroupWhenFull: true,
+                items: [
+                    'undo','redo','|','heading','|','bold','italic','underline','strikethrough','removeFormat','|',
+                    'fontSize','fontFamily','fontColor','fontBackgroundColor','|',
+                    'alignment','bulletedList','numberedList','outdent','indent','|',
+                    'link','blockQuote','insertTable','imageUpload','mediaEmbed','horizontalLine','|',
+                    'specialCharacters','findAndReplace','code','codeBlock','sourceEditing','fullscreen'
+                ]
+            },
+            link: {
+                decorators: {
+                    openInNewTab: {
+                        mode: 'manual',
+                        label: 'Open in new tab',
+                        attributes: { target: '_blank', rel: 'noopener noreferrer' }
+                    }
+                },
+                addTargetToExternalLinks: false
+            },
+            htmlSupport: {
+                allow: [{ name: /.*/, attributes: true, classes: true, styles: true }]
+            }
+        }).then(editor => {
+            addEmojiButton(editor);
+            setupSourcePreview(editor);
+            setupHtmlImport(editor);
+        }).catch(console.error);
+    </script>
+}

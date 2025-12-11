@@ -1,0 +1,127 @@
+@{
+    Layout = null;
+    var title = ViewData["Title"] as string ?? "Gittibil Blog";
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>@title</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            background: radial-gradient(circle at 30% 20%, #0b153a, #020515 70%);
+            color: #e6edf3;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.25);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand img {
+            height: 42px;
+        }
+
+        .btn-entrance {
+            background-color: #009c9c;
+            color: #fff;
+            border: none;
+            font-weight: 600;
+            padding: 0.45rem 1.25rem;
+            border-radius: 8px;
+            transition: all 0.25s ease;
+        }
+
+            .btn-entrance:hover {
+                background-color: #00bfbf;
+                transform: translateY(-1px);
+                color: #fff;
+            }
+
+        main {
+            min-height: 75vh;
+            padding: 2rem 1rem;
+        }
+
+        footer {
+            background: linear-gradient(90deg, #192d78, #1a33b2);
+            color: #fff;
+            text-align: center;
+            padding: 1.25rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+        }
+
+        @@media(max-width: 768px)
+        {
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
+        }
+       
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header>
+        <nav class="navbar navbar-expand-lg">
+            @{
+                var isAdminLoggedIn = Context.Session.GetString("AdminUser") != null;
+            }
+            <div class="container d-flex justify-content-between align-items-center">
+                <!-- Logo -->
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Blog" asp-action="Index">
+                    <img src="~/Gittibil_Logo.png" alt="Gittibil Logo" />
+                </a>
+               
+            <div class="d-flex align-items-center">
+                    @if (isAdminLoggedIn)
+                    {
+                        <a asp-controller="Admin" asp-action="Logout"
+                           style="background-color:#e60000;color:#fff;font-weight:700;
+                  padding:0.45rem 1.25rem;border-radius:8px;
+                  border:1px solid #ff3333;letter-spacing:0.5px;
+                  box-shadow:0 2px 6px rgba(255,0,0,0.3);
+                  text-decoration:none;transition:all 0.25s ease;
+                  display:inline-flex;align-items:center;margin-right:10px;"
+                           onmouseover="this.style.backgroundColor='#ff1a1a';this.style.boxShadow='0 4px 10px rgba(255,0,0,0.4)';"
+                           onmouseout="this.style.backgroundColor='#e60000';this.style.boxShadow='0 2px 6px rgba(255,0,0,0.3)';">
+                            <i class="bi bi-box-arrow-right me-1"></i> SIGN OUT
+                        </a>
+                    }
+
+                <a href="https://gittibilsms.com" class="btn btn-entrance">
+                    <i class="bi bi-person-circle me-1"></i> ENTRANCE
+                </a>
+            </div>
+
+
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        © @DateTime.UtcNow.Year GittiBil SMS. All rights reserved.
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

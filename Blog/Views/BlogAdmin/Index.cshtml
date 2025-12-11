@@ -1,0 +1,111 @@
+﻿@{
+    ViewData["Title"] = "Manage Blogs";
+    Layout = "_Layout";
+}
+
+<div class="main-container" style="max-width: 1100px; margin: 2rem auto; color: #111;">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4"
+         style="border-bottom: 2px solid #e5e7eb; padding-bottom: .75rem;">
+        <h2 class="mb-0" style="font-weight: 800; font-size: 1.75rem; color: #ffffff;">
+            Blogs List
+        </h2>
+        <a asp-action="Create" class="btn btn-primary"
+           style="background-color: #0078d7; border: none; font-weight: 600; padding: .45rem 1.25rem; border-radius: 8px;">
+            + Create
+        </a>
+    </div>
+
+    <!-- Table Container -->
+    <div style="
+        background-color: #f3f4f6; /* Light gray box */
+        border: 1px solid #d1d5db;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    ">
+        <table id="blogTable" class="table table-hover align-middle"
+               style="width:100%; color:#111; border-collapse: collapse;">
+            <!-- Content will be loaded dynamically -->
+        </table>
+
+        <!-- Pagination -->
+        <nav style="margin-top: 1.5rem; text-align:center;">
+            <ul class="pagination justify-content-center" id="pagination" style="gap: .35rem;"></ul>
+        </nav>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let page = 1, pageSize = 10;
+
+        function loadBlogs() {
+            $.get('@Url.Action("GetBlogs")', { page, pageSize, q: $('#search').val() }, function (res) {
+                let rows = res.data.map(b => `
+                    <tr style="border-bottom:1px solid #e5e7eb;">
+                        <td style="color:#0078d7; font-weight:600;">${b.blogId}</td>
+                        <td>
+                            <div style="font-weight:600; color:#111;">${b.title}</div>
+                            <div class="text-muted small" style="color:#6b7280;">${b.slug}</div>
+                        </td>
+                        <td>                             
+                            <div class="text-muted small" style="color:#6b7280;">${new Date(b.createdDate).toLocaleString()}</div>
+                        </td>
+                        <td>${b.isPublished ? '✅' : '❌'}</td>
+                        <td>${b.isActive ? '✅' : '❌'}</td>
+                        <td>
+                            <a href='@Url.Action("Edit")/${b.blogId}'
+                               class='btn btn-sm'
+                               style="background-color:#ffc107; color:#111; font-weight:600; border:none; border-radius:6px; padding:.25rem .75rem;">
+                               Edit
+                            </a>
+                        </td>
+                    </tr>`).join('');
+
+                $('#blogTable').html(`
+                    <thead>
+                        <tr style="background-color:#e5e7eb; color:#0078d7; font-weight:700;">
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Created</th>
+                            <th>Published</th>
+                            <th>Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                `);
+
+                paginate(res.total);
+            });
+        }
+
+        function paginate(total) {
+            let pages = Math.ceil(total / pageSize);
+            let html = '';
+            for (let i = 1; i <= pages; i++) {
+                html += `
+                    <li class="page-item ${i === page ? 'active' : ''}" style="list-style:none;">
+                        <a class="page-link" href="#"
+                           style="
+                               background-color:${i === page ? '#0078d7' : '#f3f4f6'};
+                               border:1px solid #d1d5db;
+                               color:${i === page ? '#fff' : '#111'};
+                               border-radius:6px;
+                               font-weight:600;
+                               padding:.4rem .8rem;
+                           "
+                           onclick="page=${i};loadBlogs();return false;">
+                           ${i}
+                        </a>
+                    </li>`;
+            }
+            $('#pagination').html(html);
+        }
+
+        $(loadBlogs);
+    </script>
+}
