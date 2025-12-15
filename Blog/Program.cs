@@ -1,8 +1,13 @@
+using Azure.Identity;
 using Blog.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Azure Key Vault
+var keyVaultUrl = new Uri("https://blogkeyvaultnew.vault.azure.net/");
+builder.Configuration.AddAzureKeyVault(keyVaultUrl, new DefaultAzureCredential());
 
 // ---- CORS ----
 const string AllowFrontendOrigin = "AllowFrontendOrigin";
