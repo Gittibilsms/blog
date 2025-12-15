@@ -8,7 +8,7 @@ public class BlogController : Controller
     private readonly AppDbContext _db;
 
     public BlogController(AppDbContext db) => _db = db;
-
+    //m445w4w4tw
     // List all public blog posts (admin can access too)
     public async Task<IActionResult> Index()
     {
