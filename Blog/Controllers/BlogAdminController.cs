@@ -1,4 +1,6 @@
-﻿using Blog.Data;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Blog.Data;
 using Blog.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -78,20 +80,42 @@ namespace Blog.Controllers
             if (upload == null || upload.Length == 0)
                 return BadRequest(new { error = "No file uploaded" });
 
-            // folder inside wwwroot
-            var folder = Path.Combine(_webHostEnvironment.WebRootPath, "blog-images");
+            var allowedExt = new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
+            var ext = Path.GetExtension(upload.FileName).ToLowerInvariant();
+            if (!allowedExt.Contains(ext))
+                return BadRequest(new { error = "Only image files are allowed" });
 
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
+            if (upload.Length > 5 * 1024 * 1024)
+                return BadRequest(new { error = "Max 5MB" });
 
-            var fileName = Guid.NewGuid() + Path.GetExtension(upload.FileName);
-            var filePath = Path.Combine(folder, fileName);
+            var cfg = HttpContext.RequestServices.GetRequiredService<IConfiguration>();
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-                await upload.CopyToAsync(stream);
+            // Get connection string from Key Vault (via configuration)
+            var connStr = cfg["AzureStorageConnectionString"]; // This now comes from Key Vault!
+            var containerName = cfg["AzureBlob:ContainerName"];
+            var publicBaseUrl = cfg["AzureBlob:PublicBaseUrl"]; // optional
 
-            // must match CKEditor expected JSON output
-            var url = Url.Content("~/blog-images/" + fileName);
+            var blobServiceClient = new BlobServiceClient(connStr);
+            var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+            // Create container if it doesn't exist (safe)
+            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+            var fileName = $"{Guid.NewGuid()}{ext}";
+            var blobClient = containerClient.GetBlobClient(fileName);
+
+            // Upload
+            using (var stream = upload.OpenReadStream())
+            {
+                await blobClient.UploadAsync(stream, new BlobHttpHeaders
+                {
+                    ContentType = upload.ContentType
+                });
+            }
+
+            var url = !string.IsNullOrWhiteSpace(publicBaseUrl)
+                ? $"{publicBaseUrl}/{fileName}"
+                : blobClient.Uri.ToString();
 
             return Json(new { url });
         }
