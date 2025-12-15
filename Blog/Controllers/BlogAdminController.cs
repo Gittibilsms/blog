@@ -63,9 +63,8 @@ namespace Blog.Controllers
             if (!ModelState.IsValid) return View(model);
 
             model.CreatedBy = HttpContext.Session.GetString("AdminUser")!;
-            model.CreatedDate = DateTime.UtcNow;
-            if (model.IsPublished && model.PublishedDate == null)
-                model.PublishedDate = DateTime.UtcNow;
+            model.CreatedDate = DateTime.UtcNow;           
+            model.PublishedDate = DateTime.UtcNow;
             model.UpdatedBy = HttpContext.Session.GetString("AdminUser")!;
             model.UpdatedDate = DateTime.UtcNow;
 
