@@ -11,6 +11,7 @@ namespace Blog.Data
 
         public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
         public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
+        public DbSet<Pricing> Pricings => Set<Pricing>();
         protected override void OnModelCreating(ModelBuilder b)
         {
             b.Entity<BlogPost>()
