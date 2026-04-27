@@ -55,7 +55,7 @@ namespace Blog.Controllers
         }
 
         [HttpGet]
-        [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any)]
+       // [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> Getpricing()
         {
 
