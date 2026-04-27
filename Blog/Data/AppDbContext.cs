@@ -20,7 +20,9 @@ namespace Blog.Data
             b.Entity<AdminUser>()
                 .Property(a => a.AdminId)
                 .ValueGeneratedOnAdd();
-             
+
+            b.Entity<Pricing>().ToTable("Pricing");
+
 
             // 1) Use a FIXED bcrypt hash string (compute once, paste literal)
             // Example placeholder below — replace with YOUR real hash string.
